@@ -19,7 +19,7 @@ public final class StringCodec implements ByteCodec<String> {
             if (bs.length > 98301) {
                 throw new RuntimeException("String too big (was " + bs.length + " bytes encoded, max " + 98301 + ")");
             } else {
-                ByteBufUtils.writeVarInt(bs.length, buffer);
+                ByteBufUtils.writeVarInt(buffer, bs.length);
                 buffer.writeBytes(bs);
             }
         }

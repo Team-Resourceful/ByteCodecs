@@ -15,7 +15,7 @@ public record MapCodec<K, V>(PairCodec<K, V> codec) implements ByteCodec<Map<K, 
 
     @Override
     public void encode(Map<K, V> value, ByteBuf buffer) {
-        ByteBufUtils.writeVarInt(value.size(), buffer);
+        ByteBufUtils.writeVarInt(buffer, value.size());
         value.entrySet().forEach(entry -> codec.encode(entry, buffer));
     }
 

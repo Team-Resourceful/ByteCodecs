@@ -2,9 +2,11 @@ package com.teamresourceful.bytecodecs.utils;
 
 import io.netty.buffer.ByteBuf;
 
+import java.util.UUID;
+
 public final class ByteBufUtils {
 
-    public static void writeVarInt(int input, ByteBuf buffer) {
+    public static void writeVarInt(ByteBuf buffer, int input) {
         while((input & -128) != 0) {
             buffer.writeByte(input & 127 | 128);
             input >>>= 7;
@@ -27,5 +29,14 @@ public final class ByteBufUtils {
         } while((b & 128) == 128);
 
         return i;
+    }
+
+    public static void writeUUID(ByteBuf buffer, UUID uuid) {
+        buffer.writeLong(uuid.getMostSignificantBits());
+        buffer.writeLong(uuid.getLeastSignificantBits());
+    }
+
+    public static UUID readUUID(ByteBuf buffer) {
+        return new UUID(buffer.readLong(), buffer.readLong());
     }
 }

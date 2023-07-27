@@ -4,23 +4,23 @@ import com.teamresourceful.bytecodecs.base.ByteCodec;
 import com.teamresourceful.bytecodecs.utils.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.function.Function;
 
-public record ListCodec<T>(ByteCodec<T> codec) implements ByteCodec<List<T>> {
+public record CollectionCodec<T, C extends Collection<T>>(ByteCodec<T> codec, Function<Integer, C> creator) implements ByteCodec<C> {
 
     @Override
-    public void encode(List<T> value, ByteBuf buffer) {
-        ByteBufUtils.writeVarInt(value.size(), buffer);
+    public void encode(C value, ByteBuf buffer) {
+        ByteBufUtils.writeVarInt(buffer, value.size());
         for (T t : value) {
             codec.encode(t, buffer);
         }
     }
 
     @Override
-    public List<T> decode(ByteBuf buffer) {
+    public C decode(ByteBuf buffer) {
         int size = ByteBufUtils.readVarInt(buffer);
-        List<T> list = new ArrayList<>(size);
+        C list = creator.apply(size);
         for (int i = 0; i < size; i++) {
             list.add(codec.decode(buffer));
         }
