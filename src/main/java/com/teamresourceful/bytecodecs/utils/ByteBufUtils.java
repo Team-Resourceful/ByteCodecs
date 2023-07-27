@@ -31,6 +31,31 @@ public final class ByteBufUtils {
         return i;
     }
 
+    public static void writeVarLong(ByteBuf buffer, long value) {
+        while((value & -128L) != 0L) {
+            buffer.writeByte((int)(value & 127L) | 128);
+            value >>>= 7;
+        }
+
+        buffer.writeByte((int)value);
+    }
+
+    public static long readVarLong(ByteBuf buffer) {
+        long l = 0L;
+        int i = 0;
+
+        byte b;
+        do {
+            b = buffer.readByte();
+            l |= (long)(b & 127) << i++ * 7;
+            if (i > 10) {
+                throw new RuntimeException("VarLong too big");
+            }
+        } while((b & 128) == 128);
+
+        return l;
+    }
+
     public static void writeUUID(ByteBuf buffer, UUID uuid) {
         buffer.writeLong(uuid.getMostSignificantBits());
         buffer.writeLong(uuid.getLeastSignificantBits());

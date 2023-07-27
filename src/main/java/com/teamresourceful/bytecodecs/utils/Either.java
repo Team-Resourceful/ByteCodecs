@@ -1,10 +1,10 @@
-package com.teamresourceful.bytecodecs.types;
+package com.teamresourceful.bytecodecs.utils;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public sealed interface Either<L, R> {
+public sealed interface Either<L, R> permits Either.Left, Either.Right {
 
     static <L, R> Either<L, R> ofLeft(final L left) {
         return new Left<>(left);
