@@ -6,6 +6,7 @@ import com.teamresourceful.bytecodecs.utils.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -16,15 +17,19 @@ public interface ByteCodec<T> {
     T decode(ByteBuf buffer);
 
     default ByteCodec<List<T>> listOf() {
-        return new CollectionCodec<>(this, ArrayList::new);
+        return collectionOf(ArrayList::new);
     }
 
     default ByteCodec<Set<T>> setOf() {
-        return new CollectionCodec<>(this, HashSet::new);
+        return collectionOf(HashSet::new);
     }
 
     default ByteCodec<Set<T>> linkedSetOf() {
-        return new CollectionCodec<>(this, LinkedHashSet::new);
+        return collectionOf(LinkedHashSet::new);
+    }
+
+    default <C extends Collection<T>> ByteCodec<C> collectionOf(Function<Integer, C> getter) {
+        return new CollectionCodec<>(this, getter);
     }
 
     default ByteCodec<Optional<T>> optionalOf() {
@@ -47,10 +52,14 @@ public interface ByteCodec<T> {
         return new MappingCodec<>(this, decoder, encoder);
     }
 
+    default <O> ByteCodec<O> dispatch(Function<T, ByteCodec<O>> getter, Function<O, T> keyGetter) {
+        return new KeyDispatchCodec<>(this, getter, keyGetter);
+    }
+
     static <F, S> ByteCodec<Either<F, S>> either(ByteCodec<F> first, ByteCodec<S> second) {
         final ByteCodec<Either<F, S>> left = first.map(Either::ofLeft, Either::leftOrThrow);
         final ByteCodec<Either<F, S>> right = second.map(Either::ofRight, Either::rightOrThrow);
-        return new KeyDispatchCodec<>(ByteCodec.BOOLEAN, value -> value ? left : right, Either::isLeft);
+        return ByteCodec.BOOLEAN.dispatch(value -> value ? left : right, Either::isLeft);
     }
 
     static <T> ByteCodec<T> choice(ByteCodec<T> first, ByteCodec<T> second, Function<T, Either<T, T>> discriminator) {
@@ -59,6 +68,18 @@ public interface ByteCodec<T> {
 
     static <T extends Enum<T>> ByteCodec<T> ofEnum(Class<T> enumClass) {
         return new EnumCodec<>(enumClass);
+    }
+
+    static <T> ByteCodec<T> unit(T value) {
+        return new UnitCodec<>(value);
+    }
+
+    static <T> ByteCodec<T> unit(Supplier<T> value) {
+        return new UnitCodec<>(value);
+    }
+
+    static <T> ByteCodec<T> passthrough(BiConsumer<ByteBuf, T> encoder, Function<ByteBuf, T> decoder) {
+        return new PassthroughCodec<>(encoder, decoder);
     }
 
     ByteCodec<String> STRING = StringCodec.INSTANCE;
