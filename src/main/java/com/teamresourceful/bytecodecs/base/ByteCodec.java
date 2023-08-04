@@ -48,6 +48,10 @@ public interface ByteCodec<T> {
         return new ObjectEntryByteCodec<>(this, getter);
     }
 
+    default <O> ObjectEntryByteCodec<O, Optional<T>> optionalFieldOf(Function<O, Optional<T>> getter) {
+        return new ObjectEntryByteCodec<>(this.optionalOf(), getter);
+    }
+
     default <R> ByteCodec<R> map(Function<T, R> decoder, Function<R, T> encoder) {
         return new MappingCodec<>(this, decoder, encoder);
     }
@@ -83,6 +87,7 @@ public interface ByteCodec<T> {
     }
 
     ByteCodec<String> STRING = StringCodec.INSTANCE;
+    ByteCodec<String> STRING_COMPONENT = StringCodec.COMPONENT_LENGTH;
     ByteCodec<Character> CHAR = new PassthroughCodec<>((buf, value) -> buf.writeChar(value), ByteBuf::readChar);
     ByteCodec<Boolean> BOOLEAN = new PassthroughCodec<>(ByteBuf::writeBoolean, ByteBuf::readBoolean);
     ByteCodec<Byte> BYTE = new PassthroughCodec<>((buf, value) -> buf.writeByte(value), ByteBuf::readByte);
