@@ -1,6 +1,6 @@
 ### ByteCodecs
 
-This is an expermental project which allows for the easy encoding and decoding of Netty ByteBufs
+This is an experimental project which allows for the easy encoding and decoding of Netty ByteBufs
 
 
 #### Example
