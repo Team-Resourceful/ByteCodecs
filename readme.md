@@ -1,6 +1,6 @@
 ### ByteCodecs
 
-This is an experimental project which allows for the easy encoding and decoding of Netty ByteBufs
+An easy to use defined netty bytebuf reader and writer inspired from Mojang's DataFixerUpper serialization Codecs.
 
 
 #### Example
