@@ -1,8 +1,8 @@
 package com.teamresourceful.bytecodecs.base;
 
 import com.teamresourceful.bytecodecs.defaults.*;
-import com.teamresourceful.bytecodecs.utils.Either;
 import com.teamresourceful.bytecodecs.utils.ByteBufUtils;
+import com.teamresourceful.bytecodecs.utils.Either;
 import io.netty.buffer.ByteBuf;
 
 import java.util.*;
@@ -52,6 +52,14 @@ public interface ByteCodec<T> {
         return new ObjectEntryByteCodec<>(this.optionalOf(), getter);
     }
 
+    default <O> ObjectEntryByteCodec<O, Optional<T>> optionalFieldOf(T value, Function<O, Optional<T>> getter) {
+        return new ObjectEntryByteCodec<>(this.optionalOf(value), getter);
+    }
+
+    default <O> ObjectEntryByteCodec<O, Optional<T>> optionalFieldOf(Supplier<T> value, Function<O, Optional<T>> getter) {
+        return new ObjectEntryByteCodec<>(this.optionalOf(value), getter);
+    }
+
     default <R> ByteCodec<R> map(Function<T, R> decoder, Function<R, T> encoder) {
         return new MappingCodec<>(this, decoder, encoder);
     }
@@ -84,6 +92,14 @@ public interface ByteCodec<T> {
 
     static <T> ByteCodec<T> passthrough(BiConsumer<ByteBuf, T> encoder, Function<ByteBuf, T> decoder) {
         return new PassthroughCodec<>(encoder, decoder);
+    }
+
+    static <K, V> MapCodec<K, V> mapOf(ByteCodec<K> keyCodec, ByteCodec<V> valueCodec) {
+        return new MapCodec<>(keyCodec, valueCodec);
+    }
+
+    static <K, V> PairCodec<K, V> pairOf(ByteCodec<K> keyCodec, ByteCodec<V> valueCodec) {
+        return new PairCodec<>(keyCodec, valueCodec);
     }
 
     ByteCodec<String> STRING = StringCodec.INSTANCE;
