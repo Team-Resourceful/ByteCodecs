@@ -68,6 +68,10 @@ public interface ByteCodec<T> {
         return new KeyDispatchCodec<>(this, getter, keyGetter);
     }
 
+    default <O> ByteCodec<Map<T, O>> mapDispatch(Function<T, ByteCodec<O>> getter) {
+        return new MapDispatchCodec<>(this, getter);
+    }
+
     static <F, S> ByteCodec<Either<F, S>> either(ByteCodec<F> first, ByteCodec<S> second) {
         final ByteCodec<Either<F, S>> left = first.map(Either::ofLeft, Either::leftOrThrow);
         final ByteCodec<Either<F, S>> right = second.map(Either::ofRight, Either::rightOrThrow);
