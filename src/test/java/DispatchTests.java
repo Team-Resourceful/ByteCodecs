@@ -1,28 +1,12 @@
 import com.teamresourceful.bytecodecs.base.ByteCodec;
 import com.teamresourceful.bytecodecs.defaults.KeyDispatchCodec;
 import com.teamresourceful.bytecodecs.defaults.MapDispatchCodec;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-public class DispatchTests {
-
-    private ByteBuf buf;
-
-    @BeforeEach
-    public void setup() {
-        buf = Unpooled.buffer();
-    }
-
-    @AfterEach
-    public void teardown() {
-        buf.release();
-    }
+public class DispatchTests extends TestBase {
 
     @Test
     public void mapDispatch() {

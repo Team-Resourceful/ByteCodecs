@@ -1,20 +1,10 @@
 import com.teamresourceful.bytecodecs.base.ByteCodec;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class ConversionTests {
-
-    private ByteBuf buf;
-
-    @BeforeEach
-    public void setup() {
-        buf = Unpooled.buffer();
-    }
+public class ConversionTests extends TestBase {
 
     @Test
     public void bytes() {

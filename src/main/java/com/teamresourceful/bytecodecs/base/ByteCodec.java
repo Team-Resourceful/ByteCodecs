@@ -4,6 +4,8 @@ import com.teamresourceful.bytecodecs.defaults.*;
 import com.teamresourceful.bytecodecs.utils.ByteBufUtils;
 import com.teamresourceful.bytecodecs.utils.Either;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -44,6 +46,10 @@ public interface ByteCodec<T> {
         return new OptionalSupplierCodec<>(this, value);
     }
 
+    default ByteCodec<@Nullable T> nullableOf() {
+        return optionalOf().map(o -> o.orElse(null), Optional::ofNullable);
+    }
+
     default <O> ObjectEntryByteCodec<O, T> fieldOf(Function<O, T> getter) {
         return new ObjectEntryByteCodec<>(this, getter);
     }
@@ -58,6 +64,20 @@ public interface ByteCodec<T> {
 
     default <O> ObjectEntryByteCodec<O, Optional<T>> optionalFieldOf(Supplier<T> value, Function<O, Optional<T>> getter) {
         return new ObjectEntryByteCodec<>(this.optionalOf(value), getter);
+    }
+
+    default <O> ObjectEntryByteCodec<O, @Nullable T> nullableFieldOf(Function<O, T> getter) {
+        return new ObjectEntryByteCodec<>(this.nullableOf(), getter);
+    }
+
+    default <O> ObjectEntryByteCodec<O, T> nullableFieldOf(T value, Function<O, T> getter) {
+        ByteCodec<T> codec = this.optionalOf(value).map(Optional::get, Optional::of);
+        return new ObjectEntryByteCodec<>(codec, getter);
+    }
+
+    default <O> ObjectEntryByteCodec<O, T> nullableFieldOf(Supplier<@NotNull T> value, Function<O, T> getter) {
+        ByteCodec<T> codec = this.optionalOf(value).map(Optional::get, Optional::of);
+        return new ObjectEntryByteCodec<>(codec, getter);
     }
 
     default <R> ByteCodec<R> map(Function<T, R> decoder, Function<R, T> encoder) {
