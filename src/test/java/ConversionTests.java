@@ -84,6 +84,13 @@ public class ConversionTests extends TestBase {
     }
 
     @Test
+    public void zigzagvarints() {
+        int value = -0x12345678;
+        ByteCodec.ZIGZAG_VAR_INT.encode(value, buf);
+        Assertions.assertEquals(value, ByteCodec.ZIGZAG_VAR_INT.decode(buf));
+    }
+
+    @Test
     public void uuids() {
         UUID value = new UUID(0x1234567890ABCDEFL, 0x1234567890ABCDEFL);
         ByteCodec.UUID.encode(value, buf);

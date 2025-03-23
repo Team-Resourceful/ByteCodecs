@@ -134,6 +134,7 @@ public interface ByteCodec<T> {
     ByteCodec<Short> SHORT = new PassthroughCodec<>((buf, value) -> buf.writeShort(value), ByteBuf::readShort);
     ByteCodec<Integer> INT = new PassthroughCodec<>(ByteBuf::writeInt, ByteBuf::readInt);
     ByteCodec<Integer> VAR_INT = new PassthroughCodec<>(ByteBufUtils::writeVarInt, ByteBufUtils::readVarInt);
+    ByteCodec<Integer> ZIGZAG_VAR_INT = new PassthroughCodec<>(ByteBufUtils::writeZigZagVarInt, ByteBufUtils::readZigZagVarInt);
     ByteCodec<Long> LONG = new PassthroughCodec<>(ByteBuf::writeLong, ByteBuf::readLong);
     ByteCodec<Long> VAR_LONG = new PassthroughCodec<>(ByteBufUtils::writeVarLong, ByteBufUtils::readVarLong);
     ByteCodec<Float> FLOAT = new PassthroughCodec<>(ByteBuf::writeFloat, ByteBuf::readFloat);

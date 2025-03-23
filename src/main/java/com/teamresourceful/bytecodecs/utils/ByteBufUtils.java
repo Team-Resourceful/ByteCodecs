@@ -6,6 +6,14 @@ import java.util.UUID;
 
 public final class ByteBufUtils {
 
+    public static int encodeZigZagInt(int input) {
+        return input << 1 ^ input >> 31;
+    }
+
+    public static void writeZigZagVarInt(ByteBuf buffer, int input) {
+        writeVarInt(buffer, encodeZigZagInt(input));
+    }
+
     public static void writeVarInt(ByteBuf buffer, int input) {
         while((input & -128) != 0) {
             buffer.writeByte(input & 127 | 128);
@@ -13,6 +21,14 @@ public final class ByteBufUtils {
         }
 
         buffer.writeByte(input);
+    }
+
+    public static int decodeZigZagInt(int input) {
+        return input >>> 1 ^ -(input & 1);
+    }
+
+    public static int readZigZagVarInt(ByteBuf buffer) {
+        return decodeZigZagInt(readVarInt(buffer));
     }
 
     public static int readVarInt(ByteBuf buffer) {

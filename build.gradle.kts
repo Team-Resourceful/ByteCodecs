@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.teamresourceful"
-version = "1.1.2"
+version = "1.1.3"
 
 repositories {
     mavenCentral()
@@ -13,7 +13,7 @@ repositories {
 dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
 
-    implementation("io.netty:netty-buffer:4.1.97.Final")
+    implementation("io.netty:netty-buffer:4.1.118.Final")
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
