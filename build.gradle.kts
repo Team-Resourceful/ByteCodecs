@@ -60,7 +60,7 @@ publishing {
 
     repositories {
         maven {
-            setUrl("https://maven.resourcefulbees.com/repository/maven-releases/")
+            setUrl("https://maven.teamresourceful.com/repository/maven-releases/")
 
             credentials {
                 username = System.getenv("MAVEN_USER")
